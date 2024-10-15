@@ -1,6 +1,6 @@
 package com.sparta.plannerservice.user.entity;
 
-import com.sparta.plannerservice.common.entity.LongIdKeyEntity;
+import com.sparta.plannerservice.common.entity.UuidEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
@@ -13,7 +13,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class User extends LongIdKeyEntity {
+public class User extends UuidEntity {
 
     @Column(nullable = false)
     private String username;

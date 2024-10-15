@@ -9,10 +9,10 @@ import java.util.UUID;
 @Getter
 @NoArgsConstructor
 public class UuidEntityResDto extends TimestampedEntityResDto {
-    private UUID uuid;
+    private UUID id;
 
     public UuidEntityResDto(UuidEntity entity) {
         super(entity);
-        this.uuid = entity.getUuid();
+        this.id = entity.getId();
     }
 }

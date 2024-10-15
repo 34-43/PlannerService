@@ -13,5 +13,5 @@ import java.util.UUID;
 public class UuidEntity extends TimestampedEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID uuid;
+    private UUID id;
 }
