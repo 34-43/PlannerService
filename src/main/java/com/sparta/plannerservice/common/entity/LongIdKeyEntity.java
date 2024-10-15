@@ -8,7 +8,7 @@ import lombok.Getter;
 
 @Getter
 @MappedSuperclass
-public abstract class LongIdKeyEntity {
+public abstract class LongIdKeyEntity extends TimestampedEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

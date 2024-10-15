@@ -1,6 +1,6 @@
 package com.sparta.plannerservice.common.dto;
 
-import com.sparta.plannerservice.common.entity.TimestampedEntity;
+import com.sparta.plannerservice.common.entity.LongIdKeyEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,12 +10,12 @@ import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
-public class ReadTimestampedEntityReqDto {
+public class LongIdKeyEntityReqDto {
     private Long id;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public ReadTimestampedEntityReqDto(TimestampedEntity entity) {
+    public LongIdKeyEntityReqDto(LongIdKeyEntity entity) {
         this.id = entity.getId();
         this.createdAt = entity.getCreatedAt();
         this.updatedAt = entity.getUpdatedAt();

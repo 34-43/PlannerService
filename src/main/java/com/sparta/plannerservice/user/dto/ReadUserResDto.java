@@ -1,13 +1,13 @@
 package com.sparta.plannerservice.user.dto;
 
-import com.sparta.plannerservice.common.dto.ReadTimestampedEntityReqDto;
+import com.sparta.plannerservice.common.dto.LongIdKeyEntityReqDto;
 import com.sparta.plannerservice.user.entity.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class ReadUserResDto extends ReadTimestampedEntityReqDto {
+public class ReadUserResDto extends LongIdKeyEntityReqDto {
     private String username;
     private String email;
 
