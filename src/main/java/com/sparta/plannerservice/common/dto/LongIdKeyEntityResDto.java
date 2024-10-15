@@ -10,12 +10,12 @@ import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
-public class LongIdKeyEntityReqDto {
+public class LongIdKeyEntityResDto {
     private Long id;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public LongIdKeyEntityReqDto(LongIdKeyEntity entity) {
+    public LongIdKeyEntityResDto(LongIdKeyEntity entity) {
         this.id = entity.getId();
         this.createdAt = entity.getCreatedAt();
         this.updatedAt = entity.getUpdatedAt();
