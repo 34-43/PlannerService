@@ -3,16 +3,14 @@ package com.sparta.plannerservice.user.entity;
 import com.sparta.plannerservice.common.entity.UuidEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class User extends UuidEntity {
 
     @Column(nullable = false)
@@ -20,5 +18,7 @@ public class User extends UuidEntity {
 
     @Column(nullable = false, unique = true)
     private String email;
+
+
 
 }

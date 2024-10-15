@@ -23,6 +23,9 @@ public class MergeUserReqDto implements MergeReqDto<User> {
 
     @Override
     public User toEntity() {
-        return new User(username, email);
+        return User.builder()
+                .username(username)
+                .email(email)
+                .build();
     }
 }
