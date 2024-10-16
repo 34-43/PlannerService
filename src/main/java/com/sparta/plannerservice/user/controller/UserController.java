@@ -18,16 +18,15 @@ import java.util.UUID;
 public class UserController {
     private final UserService userService;
 
-    @PostMapping()
+    @PostMapping
     public ReadUserResDto createUser(@RequestBody @Valid final MergeUserReqDto req) {
         User reqUser = req.toEntity();
         User retrievedUser = userService.createUser(reqUser);
         return new ReadUserResDto(retrievedUser);
     }
 
-    @GetMapping()
+    @GetMapping
     public List<ReadUserResDto> readUsers() {
-        // Entity List -> 응답 Dto List
         return userService.readUsers().stream().map(ReadUserResDto::new).toList();
     }
 
