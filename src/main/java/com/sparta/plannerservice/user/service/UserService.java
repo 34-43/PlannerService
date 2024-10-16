@@ -2,6 +2,7 @@ package com.sparta.plannerservice.user.service;
 
 import com.sparta.plannerservice.common.exception.IdNotFoundException;
 import com.sparta.plannerservice.user.entity.User;
+import com.sparta.plannerservice.user.exception.EmailDuplicantException;
 import com.sparta.plannerservice.user.repository.UserRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -22,6 +23,11 @@ public class UserService {
 
     @Transactional
     public User createUser(User user) {
+        // 이메일 중복 확인 절차
+        String reqEmail = user.getEmail();
+        if (userRepository.existsByEmail(reqEmail)) {
+            throw new EmailDuplicantException(reqEmail);
+        }
         return userRepository.save(user);
     }
 
