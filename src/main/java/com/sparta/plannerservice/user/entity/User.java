@@ -22,6 +22,9 @@ public class User extends UuidEntity {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @Column(name = "password_hash", nullable = false)
+    private String passwordHash;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "user_plan",

@@ -1,11 +1,11 @@
 package com.sparta.plannerservice.user.service;
 
 import com.sparta.plannerservice.common.exception.IdNotFoundException;
+import com.sparta.plannerservice.common.util.JwtUtil;
 import com.sparta.plannerservice.user.entity.User;
 import com.sparta.plannerservice.user.exception.EmailDuplicantException;
 import com.sparta.plannerservice.user.repository.UserRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,12 +17,10 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-
-    @PersistenceContext
-    private final EntityManager em;
+    private final JwtUtil jwtUtil;
 
     @Transactional
-    public User createUser(User user) {
+    public User registerUser(User user) {
         // 이메일 중복 확인 절차
         String reqEmail = user.getEmail();
         if (userRepository.existsByEmail(reqEmail)) {
@@ -41,10 +39,22 @@ public class UserService {
 
     @Transactional
     public void updateUser(UUID id, User user) {
-        // dirty checking 사용
         User retrievedUser = findUserByIdSafe(id);
+        // dirty checking 사용
         retrievedUser.setUsername(user.getUsername());
         retrievedUser.setEmail(user.getEmail());
+        retrievedUser.setPasswordHash(user.getPasswordHash());
+    }
+
+    @Transactional
+    public void updateUser(User jwtUser, User reqUser) {
+        // jwt 파싱 과정에서 얻은 user 는 detached 이기에 dirty checking 불가능
+        // jwt 필터가 바로 직전에 user 의 존재를 보장해줌.
+        // 간접적으로 merge 를 호출해 주어야 함.
+        jwtUser.setUsername(reqUser.getUsername());
+        jwtUser.setEmail(reqUser.getEmail());
+        jwtUser.setPasswordHash(reqUser.getPasswordHash());
+        userRepository.save(jwtUser);
     }
 
     // deleteById 대신, 사용자 지정 find 메서드와 delete 를 차례대로 수행하여 id 값에 대한 처리를 포함시킵니다.
@@ -54,8 +64,20 @@ public class UserService {
         userRepository.delete(retrievedUser);
     }
 
+    @Transactional
+    public void deleteUser(HttpServletResponse httpRes, User jwtUser) {
+        userRepository.delete(jwtUser);
+        removeCookie(httpRes);
+    }
+
     // 서비스 내부에서만 사용되는 find 용 메서드. id 위치가 존재하지 않을 때 지정된 예외를 발생시킵니다.
     private User findUserByIdSafe(UUID id) {
         return userRepository.findById(id).orElseThrow(() -> new IdNotFoundException(User.class, id));
     }
+
+    // 현재 토큰 사용자가 삭제될 때, 클라이언트의 쿠키를 덮어씌워 제거하기 위한 메서드
+    private void removeCookie(HttpServletResponse httpRes) {
+        jwtUtil.addJwtToCookie(null, httpRes);
+    }
+
 }
