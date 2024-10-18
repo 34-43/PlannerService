@@ -1,6 +1,5 @@
 package com.sparta.plannerservice.user.service;
 
-import com.sparta.plannerservice.common.exception.IdNotFoundException;
 import com.sparta.plannerservice.common.util.JwtUtil;
 import com.sparta.plannerservice.user.entity.User;
 import com.sparta.plannerservice.user.exception.EmailDuplicantException;
@@ -34,12 +33,12 @@ public class UserService {
     }
 
     public User readUser(UUID id) {
-        return findUserByIdSafe(id);
+        return userRepository.findByIdSafe(id);
     }
 
     @Transactional
     public void updateUser(UUID id, User user) {
-        User retrievedUser = findUserByIdSafe(id);
+        User retrievedUser = userRepository.findByIdSafe(id);
         // dirty checking 사용
         retrievedUser.setUsername(user.getUsername());
         retrievedUser.setEmail(user.getEmail());
@@ -60,7 +59,7 @@ public class UserService {
     // deleteById 대신, 사용자 지정 find 메서드와 delete 를 차례대로 수행하여 id 값에 대한 처리를 포함시킵니다.
     @Transactional
     public void deleteUser(UUID id) {
-        User retrievedUser = findUserByIdSafe(id);
+        User retrievedUser = userRepository.findByIdSafe(id);
         userRepository.delete(retrievedUser);
     }
 
@@ -68,11 +67,6 @@ public class UserService {
     public void deleteUser(HttpServletResponse httpRes, User jwtUser) {
         userRepository.delete(jwtUser);
         removeCookie(httpRes);
-    }
-
-    // 서비스 내부에서만 사용되는 find 용 메서드. id 위치가 존재하지 않을 때 지정된 예외를 발생시킵니다.
-    private User findUserByIdSafe(UUID id) {
-        return userRepository.findById(id).orElseThrow(() -> new IdNotFoundException(User.class, id));
     }
 
     // 현재 토큰 사용자가 삭제될 때, 클라이언트의 쿠키를 덮어씌워 제거하기 위한 메서드
