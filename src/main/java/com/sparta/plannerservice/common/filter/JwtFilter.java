@@ -1,4 +1,4 @@
-package com.sparta.plannerservice.filter;
+package com.sparta.plannerservice.common.filter;
 
 import com.sparta.plannerservice.common.exception.IdNotFoundException;
 import com.sparta.plannerservice.common.util.JwtUtil;
@@ -20,7 +20,7 @@ import java.util.UUID;
 @Slf4j(topic = "JwtAuthenticationFilter")
 @Component
 @RequiredArgsConstructor
-public class JwtAuthenticationFilter extends HttpFilter {
+public class JwtFilter extends HttpFilter {
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
 
