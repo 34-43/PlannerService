@@ -44,28 +44,27 @@ jwt.secret.key=
 ## 개체 관계도 (ERD)
 
 ```mermaid
-classDiagram
-    direction BT
-    class plan {
+erDiagram
+    plan {
+	     binary(16) id PK
        datetime(6) created_at
        datetime(6) updated_at
        varchar(255) content
        varchar(255) title
-       binary(16) id
     }
-    class user {
+    user {
+       binary(16) id PK
        datetime(6) created_at
        datetime(6) updated_at
        varchar(255) email
        varchar(255) password_hash
        varchar(255) username
-       binary(16) id
     }
-    class user_plan {
+    user_plan {
        binary(16) user_id
        binary(16) plan_id
     }
     
-    user_plan  -->  plan : plan_id:id
-    user_plan  -->  user : user_id:id
+    plan  ||--o{  user_plan : plan_id
+    user  ||--o{  user_plan : user_id
 ```
