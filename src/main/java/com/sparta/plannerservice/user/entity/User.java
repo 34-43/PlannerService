@@ -1,6 +1,7 @@
 package com.sparta.plannerservice.user.entity;
 
 import com.sparta.plannerservice.common.entity.UuidEntity;
+import com.sparta.plannerservice.common.enums.PlannerRole;
 import com.sparta.plannerservice.plan.entity.Plan;
 import jakarta.persistence.*;
 import lombok.*;
@@ -15,6 +16,10 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 public class User extends UuidEntity {
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private PlannerRole role;
 
     @Column(nullable = false)
     private String username;
