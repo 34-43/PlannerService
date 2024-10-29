@@ -1,5 +1,6 @@
 package com.sparta.plannerservice.common.util;
 
+import com.sparta.plannerservice.common.enums.PlannerRole;
 import com.sparta.plannerservice.common.exception.FailedRequestException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -18,6 +19,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Objects;
+import java.util.UUID;
 
 public class JwtUtil {
     // Jwt 포맷 관련 상수 설정
@@ -40,11 +42,12 @@ public class JwtUtil {
     }
 
     // 주어진 모든 값과 전달된 인자를 토대로 양식에 맞는 Jwt 토큰 문자열을 반환하는 메서드
-    public String createToken(String subject) {
+    public String createToken(UUID uuid, PlannerRole role) {
         Date now = new Date();
 
         String jwt = Jwts.builder()
-                .subject(subject)
+                .subject(uuid.toString())
+                .claim("role", role)
                 .signWith(key)
                 .issuedAt(now)
                 .expiration(new Date(now.getTime() + TOKEN_EXPIRATION_TIME))
@@ -96,10 +99,9 @@ public class JwtUtil {
         }
     }
 
-    public String getSubjectFromToken(String token) {
+    public Claims getClaimsFromToken(String token) {
         Jws<Claims> claimsJws = validateToken(token);
-        Claims claims = claimsJws.getPayload();
-        return claims.getSubject();
+        return claimsJws.getPayload();
     }
 
     public String getTokenFromReq(HttpServletRequest req) {
