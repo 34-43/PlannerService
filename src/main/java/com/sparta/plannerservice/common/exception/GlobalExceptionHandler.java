@@ -22,14 +22,10 @@ public class GlobalExceptionHandler {
         return ExceptionResDto.responseWith(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
     }
 
-    // 사용자가 정의한 예외 (Id Not Found 등) 에 대한 Handler. Not Found(404) 또는 Bad Request(400) 반환
+    // 사용자가 정의한 예외에 대한 Handler. 열거형에 정의된 상태 코드를 사용하여 반환
     @ExceptionHandler(FailedRequestException.class)
     public ResponseEntity<ExceptionResDto> handleFailedRequestException(FailedRequestException ex) {
-        if (ex.getClass().equals(IdNotFoundException.class)) {
-            return ExceptionResDto.responseWith(HttpStatus.NOT_FOUND,ex.getMessage());
-        } else {
-            return ExceptionResDto.responseWith(HttpStatus.BAD_REQUEST,ex.getMessage());
-        }
+        return ExceptionResDto.responseWith(ex.getFailedRequest().getStatus(),ex.getMessage());
     }
 
     // Dto validation 에 의해 발생하는 인자 조건 불일치 예외에 대한 Handler. Bad Request(400) 반환
