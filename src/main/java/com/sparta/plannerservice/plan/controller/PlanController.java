@@ -29,9 +29,9 @@ public class PlanController {
     }
 
     @GetMapping
-    public List<ReadPlanResDto> readPlans(HttpServletRequest HttpReq) {
+    public List<ReadPlanResDto> readPlans(HttpServletRequest HttpReq, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         User jwtUser = getUserAttribute(HttpReq);
-        return planService.readPlans(jwtUser).stream().map(ReadPlanResDto::new).toList();
+        return planService.readPlans(jwtUser, page, size).stream().map(ReadPlanResDto::new).toList();
     }
 
     @GetMapping("/id/{id}")

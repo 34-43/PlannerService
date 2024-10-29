@@ -31,8 +31,9 @@ public class PlanService {
     }
 
     @Transactional
-    public List<Plan> readPlans(User jwtUser) {
+    public List<Plan> readPlans(User jwtUser, int page, int size) {
         // repository 를 사용하지 않고, 현재 사용자의 plans 필드 셋을 리스트로 반환합니다.
+        // Todo - page 와 size 값 활용
         return jwtUser.getPlans().stream().toList();
     }
 
