@@ -2,10 +2,7 @@ package com.sparta.plannerservice.plan.entity;
 
 import com.sparta.plannerservice.common.entity.UuidEntity;
 import com.sparta.plannerservice.user.entity.User;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.HashSet;
