@@ -1,7 +1,7 @@
 package com.sparta.plannerservice.auth.service;
 
-import com.sparta.plannerservice.common.exception.EmailUserNotFoundException;
-import com.sparta.plannerservice.common.exception.PasswordFailException;
+import com.sparta.plannerservice.common.enums.FailedRequest;
+import com.sparta.plannerservice.common.exception.FailedRequestException;
 import com.sparta.plannerservice.common.util.PasswordUtil;
 import com.sparta.plannerservice.user.entity.User;
 import com.sparta.plannerservice.user.repository.UserRepository;
@@ -15,10 +15,10 @@ public class AuthService {
     private final PasswordUtil passwordUtil;
 
     public User authenticate(String email, String password) {
-        User retrievedUser = userRepository.findByEmail(email).orElseThrow(EmailUserNotFoundException::new);
+        User retrievedUser = userRepository.findByEmail(email).orElseThrow(() -> new FailedRequestException(FailedRequest.EMAIL_NOT_FOUND));
 
         if (!passwordUtil.matches(password, retrievedUser.getPasswordHash())) {
-            throw new PasswordFailException();
+            throw new FailedRequestException(FailedRequest.PASSWORD_INCORRECT);
         }
 
         return retrievedUser;

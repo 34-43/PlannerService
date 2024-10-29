@@ -1,6 +1,8 @@
 package com.sparta.plannerservice.common.filter;
 
+import com.sparta.plannerservice.common.enums.FailedRequest;
 import com.sparta.plannerservice.common.enums.PlannerRole;
+import com.sparta.plannerservice.common.exception.FailedRequestException;
 import io.jsonwebtoken.lang.Strings;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -44,7 +46,7 @@ public class AdminFilter extends HttpFilter {
             return;
         }
 
-        throw new ServletException("Unauthorized");
+        throw new FailedRequestException(FailedRequest.ADMIN_FORBIDDEN);
 
     }
 }

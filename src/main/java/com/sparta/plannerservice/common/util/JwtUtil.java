@@ -1,8 +1,10 @@
 package com.sparta.plannerservice.common.util;
 
+import com.sparta.plannerservice.common.enums.FailedRequest;
 import com.sparta.plannerservice.common.enums.PlannerRole;
 import com.sparta.plannerservice.common.exception.FailedRequestException;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -25,7 +27,6 @@ public class JwtUtil {
     // Jwt 포맷 관련 상수 설정
     public static final String AUTHORIZATION_HEADER = "Authorization";
     public static final String BEARER_PREFIX = "Bearer ";
-    private final long TOKEN_EXPIRATION_TIME = 60 * 60 * 1000L; // 토큰 만료 시간. *60(=1시간) < *60(=1분) < 1000(=1초)
 
     // 환경 변수로 저장된 비밀 키 문자열
     @Value("${jwt.secret.key}")
@@ -43,6 +44,7 @@ public class JwtUtil {
 
     // 주어진 모든 값과 전달된 인자를 토대로 양식에 맞는 Jwt 토큰 문자열을 반환하는 메서드
     public String createToken(UUID uuid, PlannerRole role) {
+        final long TOKEN_EXPIRATION_TIME = 60 * 60 * 1000L; // 토큰 만료 시간. *60(=1시간) < *60(=1분) < 1000(=1초)
         Date now = new Date();
 
         String jwt = Jwts.builder()
@@ -87,15 +89,17 @@ public class JwtUtil {
         if (StringUtils.hasText(token) && token.startsWith(BEARER_PREFIX)) {
             return token.substring(BEARER_PREFIX.length());
         } else {
-            throw new FailedRequestException("not a bearer token");
+            throw new FailedRequestException(FailedRequest.TOKEN_INVALID);
         }
     }
 
     public Jws<Claims> validateToken(String token) {
         try {
             return Jwts.parser().verifyWith(key).build().parseSignedClaims(token);
+        } catch (ExpiredJwtException ex) {
+            throw new FailedRequestException(FailedRequest.TOKEN_EXPIRED);
         } catch (Exception ex) {
-            throw new FailedRequestException(ex.getMessage());
+            throw new FailedRequestException(FailedRequest.TOKEN_INVALID);
         }
     }
 
@@ -117,6 +121,6 @@ public class JwtUtil {
                 }
             }
         }
-        throw new FailedRequestException("there is no authorization token");
+        throw new FailedRequestException(FailedRequest.TOKEN_NOT_FOUND);
     }
 }

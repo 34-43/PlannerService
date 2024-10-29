@@ -1,7 +1,8 @@
 package com.sparta.plannerservice.common.filter;
 
+import com.sparta.plannerservice.common.enums.FailedRequest;
 import com.sparta.plannerservice.common.enums.PlannerRole;
-import com.sparta.plannerservice.common.exception.IdNotFoundException;
+import com.sparta.plannerservice.common.exception.FailedRequestException;
 import com.sparta.plannerservice.common.util.JwtUtil;
 import com.sparta.plannerservice.user.entity.User;
 import com.sparta.plannerservice.user.repository.UserRepository;
@@ -49,7 +50,7 @@ public class AuthFilter extends HttpFilter {
                 String sub = claims.getSubject();
                 UUID subUuid = UUID.fromString(sub);
                 PlannerRole role = PlannerRole.valueOf((String) claims.get("role"));
-                User user = userRepository.findById(subUuid).orElseThrow(() -> new IdNotFoundException(User.class, subUuid));
+                User user = userRepository.findById(subUuid).orElseThrow(() -> new FailedRequestException(FailedRequest.ID_NOT_FOUND));
                 request.setAttribute("user", user);
                 request.setAttribute("role", role);
                 chain.doFilter(request, response);
