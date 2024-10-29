@@ -1,4 +1,4 @@
-package com.sparta.plannerservice.login.dto;
+package com.sparta.plannerservice.auth.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

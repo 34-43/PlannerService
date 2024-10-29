@@ -1,4 +1,4 @@
-package com.sparta.plannerservice.login.service;
+package com.sparta.plannerservice.auth.service;
 
 import com.sparta.plannerservice.common.exception.EmailUserNotFoundException;
 import com.sparta.plannerservice.common.exception.PasswordFailException;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class LoginService {
+public class AuthService {
     private final UserRepository userRepository;
     private final PasswordUtil passwordUtil;
 
