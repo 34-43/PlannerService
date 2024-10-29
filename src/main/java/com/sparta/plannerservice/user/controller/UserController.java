@@ -1,86 +1,55 @@
 package com.sparta.plannerservice.user.controller;
 
-import com.sparta.plannerservice.common.util.PasswordUtil;
 import com.sparta.plannerservice.user.dto.MergeUserReqDto;
 import com.sparta.plannerservice.user.dto.ReadUserResDto;
 import com.sparta.plannerservice.user.entity.User;
 import com.sparta.plannerservice.user.service.UserService;
-import jakarta.servlet.http.HttpServletRequest;
+import com.sparta.plannerservice.user.util.UserFactory;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-    private final PasswordUtil passwordUtil;
+    private final UserFactory userFactory;
 
     @PostMapping
-    public ReadUserResDto registerUser(@RequestBody @Valid final MergeUserReqDto req) {
-        User reqUser = makeHashedUser(req);
+    public ResponseEntity<ReadUserResDto> registerUser(@RequestBody @Valid final MergeUserReqDto req) {
+        User reqUser = userFactory.createUser(req);
         User retrievedUser = userService.registerUser(reqUser);
-        return new ReadUserResDto(retrievedUser);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ReadUserResDto(retrievedUser));
     }
 
     @GetMapping
-    public List<ReadUserResDto> readUsers() {
-        return userService.readUsers().stream().map(ReadUserResDto::new).toList();
-    }
-
-    @GetMapping("/id/{id}")
-    public ReadUserResDto readUser(@PathVariable UUID id) {
-        User retrievedUser = userService.readUser(id);
-        return new ReadUserResDto(retrievedUser);
+    public ResponseEntity<List<ReadUserResDto>> readUsers() {
+        List<User> users = userService.readUsers();
+        return ResponseEntity.ok(users.stream().map(ReadUserResDto::new).toList());
     }
 
     @GetMapping("/self")
-    public ReadUserResDto readSelf(HttpServletRequest httpReq) {
-        User jwtUser = (User) httpReq.getAttribute("user");
-        return new ReadUserResDto(jwtUser);
-    }
-
-    @PutMapping("/id/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateUser(@PathVariable UUID id, @RequestBody @Valid final MergeUserReqDto req) {
-        User reqUser = makeHashedUser(req);
-        userService.updateUser(id, reqUser);
+    public ResponseEntity<ReadUserResDto> readSelf(@RequestAttribute("user") User jwtUser) {
+        return ResponseEntity.ok(new ReadUserResDto(jwtUser));
     }
 
     @PutMapping("/self")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateSelf(HttpServletRequest httpReq, @RequestBody @Valid final MergeUserReqDto req) {
-        User jwtUser = (User) httpReq.getAttribute("user");
-        User reqUser = makeHashedUser(req);
+    public ResponseEntity<Void> updateSelf(@RequestAttribute("user") User jwtUser, @RequestBody @Valid final MergeUserReqDto req) {
+        User reqUser = userFactory.createUser(req);
         userService.updateUser(jwtUser, reqUser);
-    }
-
-    @DeleteMapping("/id/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteUser(HttpServletResponse httpRes, @PathVariable UUID id) {
-        userService.deleteUser(id);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/self")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteSelf(HttpServletRequest httpReq, HttpServletResponse httpRes) {
-        User jwtUser = (User) httpReq.getAttribute("user");
+    public ResponseEntity<Void> deleteSelf(@RequestAttribute("user") User jwtUser, HttpServletResponse httpRes) {
         userService.deleteUser(httpRes, jwtUser);
-    }
-
-    private User makeHashedUser(MergeUserReqDto req) {
-        String hash = passwordUtil.encode(req.getPassword());
-        return User.builder()
-                .username(req.getUsername())
-                .email(req.getEmail())
-                .passwordHash(hash)
-                .build();
+        return ResponseEntity.noContent().build();
     }
 
 }
