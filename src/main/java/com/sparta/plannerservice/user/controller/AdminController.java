@@ -20,6 +20,12 @@ public class AdminController {
     private final AdminService adminService;
     private final UserFactory userFactory;
 
+    @GetMapping("/id/{id}")
+    public ResponseEntity<ReadUserResDto> readUser(@PathVariable UUID id) {
+        User retrievedUser = adminService.readUser(id);
+        return ResponseEntity.ok(new ReadUserResDto(retrievedUser));
+    }
+
     @PutMapping("/id/{id}")
     public ResponseEntity<Void> updateUser(@PathVariable UUID id, @RequestBody @Valid final MergeUserReqDto req) {
         User reqUser = userFactory.createUser(req);
@@ -33,9 +39,4 @@ public class AdminController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/id/{id}")
-    public ResponseEntity<ReadUserResDto> readUser(@PathVariable UUID id) {
-        User retrievedUser = adminService.readUser(id);
-        return ResponseEntity.ok(new ReadUserResDto(retrievedUser));
-    }
 }
