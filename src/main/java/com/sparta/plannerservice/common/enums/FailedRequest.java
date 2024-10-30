@@ -11,6 +11,10 @@ public enum FailedRequest {
     // User
     EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, "Email already exists"),
 
+    // Plan
+    API_WEATHER_MALFUNCTION(HttpStatus.BAD_GATEWAY, "API weather malfunction"),
+    NOT_YOUR_PLAN(HttpStatus.FORBIDDEN, "You should be a member of this plan"),
+
     // Auth
     EMAIL_NOT_FOUND(HttpStatus.UNAUTHORIZED, "Cannot login with unexisting email"),
     PASSWORD_INCORRECT(HttpStatus.UNAUTHORIZED, "Password incorrect"),
