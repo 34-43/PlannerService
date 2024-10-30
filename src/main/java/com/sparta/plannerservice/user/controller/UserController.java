@@ -1,6 +1,7 @@
 package com.sparta.plannerservice.user.controller;
 
 import com.sparta.plannerservice.user.dto.MergeUserReqDto;
+import com.sparta.plannerservice.user.dto.ReadPublicUserResDto;
 import com.sparta.plannerservice.user.dto.ReadUserResDto;
 import com.sparta.plannerservice.user.entity.User;
 import com.sparta.plannerservice.user.service.UserService;
@@ -30,9 +31,9 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ReadUserResDto>> readUsers() {
+    public ResponseEntity<List<ReadPublicUserResDto>> readUsers() {
         List<User> users = userService.readUsers();
-        return ResponseEntity.ok(users.stream().map(ReadUserResDto::new).toList());
+        return ResponseEntity.ok(users.stream().map(ReadPublicUserResDto::new).toList());
     }
 
     @GetMapping("/self")
