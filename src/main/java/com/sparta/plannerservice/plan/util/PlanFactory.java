@@ -8,10 +8,11 @@ import java.util.ArrayList;
 
 @Component
 public class PlanFactory {
-    public Plan createPlan(MergePlanReqDto req) {
+    public Plan createPlan(MergePlanReqDto req, String weather) {
         return Plan.builder()
                 .title(req.getTitle())
                 .content(req.getContent())
+                .weather(weather)
                 .users(new ArrayList<>())
                 .build();
     }

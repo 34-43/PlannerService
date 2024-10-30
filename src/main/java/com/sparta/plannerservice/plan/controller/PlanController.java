@@ -25,23 +25,24 @@ public class PlanController {
     private final WeatherApiService weatherApiService;
     private final PlanFactory planFactory;
 
-    // fixme
-    @GetMapping("/weather")
-    public ResponseEntity<String> fetchWeather() {
-        return weatherApiService.fetchWeather(LocalDate.now());
-    }
-
     @PostMapping
     public ResponseEntity<ReadPlanResDto> createPlan(@RequestAttribute("user") User jwtUser, @RequestBody @Valid final MergePlanReqDto req) {
-        Plan reqPlan = planFactory.createPlan(req);
+        String weather = weatherApiService.fetchWeather(LocalDate.now());
+        Plan reqPlan = planFactory.createPlan(req, weather);
         Plan retrievedPlan = planService.createPlan(jwtUser, reqPlan);
         URI path = URI.create("/api/plans/id/" + retrievedPlan.getId());
         return ResponseEntity.created(path).body(new ReadPlanResDto(retrievedPlan));
     }
 
     @GetMapping
-    public ResponseEntity<List<ReadPlanResDto>> readPlans(@RequestAttribute("user") User jwtUser, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(planService.readPlans(jwtUser, page, size).stream().map(ReadPlanResDto::new).toList());
+    public ResponseEntity<List<ReadPlanResDto>> readPlans(
+            @RequestAttribute("user") User jwtUser,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "updatedAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String order
+    ) {
+        return ResponseEntity.ok(planService.readPlans(jwtUser, page, size, sortBy, order).stream().map(ReadPlanResDto::new).toList());
     }
 
     @GetMapping("/id/{id}")
@@ -52,7 +53,8 @@ public class PlanController {
 
     @PutMapping("/id/{id}")
     public ResponseEntity<Void> updatePlan(@RequestAttribute("user") User jwtUser, @PathVariable UUID id, @RequestBody @Valid final MergePlanReqDto req) {
-        Plan reqPlan = planFactory.createPlan(req);
+        String weather = weatherApiService.fetchWeather(LocalDate.now());
+        Plan reqPlan = planFactory.createPlan(req, weather);
         planService.updatePlan(jwtUser, id, reqPlan);
         return ResponseEntity.noContent().build();
     }

@@ -22,7 +22,10 @@ public class Plan extends UuidEntity {
     @Column(nullable = false)
     private String content;
 
+    @Column(nullable = false)
+    private String weather;
+
     @ManyToMany(mappedBy = "plans", fetch = FetchType.LAZY)
     private List<User> users = new ArrayList<>();
-    
+
 }
