@@ -8,10 +8,10 @@ import com.sparta.plannerservice.user.util.UserFactory;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -25,7 +25,8 @@ public class UserController {
     public ResponseEntity<ReadUserResDto> registerUser(@RequestBody @Valid final MergeUserReqDto req) {
         User reqUser = userFactory.createUser(req);
         User retrievedUser = userService.registerUser(reqUser);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ReadUserResDto(retrievedUser));
+        URI uriId = URI.create(String.valueOf(retrievedUser.getId()));
+        return ResponseEntity.created(uriId).body(new ReadUserResDto(retrievedUser));
     }
 
     @GetMapping
