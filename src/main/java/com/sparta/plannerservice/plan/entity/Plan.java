@@ -5,8 +5,8 @@ import com.sparta.plannerservice.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -23,6 +23,6 @@ public class Plan extends UuidEntity {
     private String content;
 
     @ManyToMany(mappedBy = "plans", fetch = FetchType.LAZY)
-    private Set<User> users = new HashSet<>();
-
+    private List<User> users = new ArrayList<>();
+    
 }
