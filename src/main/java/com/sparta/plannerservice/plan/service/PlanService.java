@@ -1,6 +1,7 @@
 package com.sparta.plannerservice.plan.service;
 
 import com.sparta.plannerservice.common.enums.FailedRequest;
+import com.sparta.plannerservice.common.enums.PlannerRole;
 import com.sparta.plannerservice.common.exception.FailedRequestException;
 import com.sparta.plannerservice.plan.entity.Plan;
 import com.sparta.plannerservice.plan.repository.PlanRepository;
@@ -8,6 +9,10 @@ import com.sparta.plannerservice.user.entity.User;
 import com.sparta.plannerservice.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,11 +37,21 @@ public class PlanService {
     }
 
     @Transactional
-    public List<Plan> readPlans(User jwtUser, int page, int size) {
+    public List<Plan> readPlans(User jwtUser, int page, int size, String sortBy, String order) {
         // 사용자 측 조인 테이블을 활용합니다.
-        // Todo - page 와 size 값 활용
         jwtUser = userRepository.findByIdSafe(jwtUser.getId());
-        return jwtUser.getPlans().stream().toList();
+
+        Sort.Direction dir = order.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(dir, sortBy);
+        Pageable pageable = PageRequest.of(page - 1, size, sort);
+        Page<Plan> planList;
+
+        PlannerRole role = jwtUser.getRole();
+        planList = switch (role) {
+            case ADMIN -> planRepository.findAll(pageable);
+            case USER -> planRepository.findAllByUserId(jwtUser, pageable);
+        };
+        return planList.stream().toList();
     }
 
     @Transactional
@@ -48,9 +63,12 @@ public class PlanService {
     public void updatePlan(User jwtUser, UUID id, Plan plan) {
         Plan retrievedPlan = getCheckedPersistPlan(jwtUser, id);
 
-        // 계획 엔티티의 내용만 갱신합니다.
+        // 계획 엔티티의 내용을 갱신합니다.
         retrievedPlan.setTitle(plan.getTitle());
         retrievedPlan.setContent(plan.getContent());
+
+        // 계획 수정일의 날씨를 반영합니다.
+        retrievedPlan.setWeather(plan.getWeather());
     }
 
     @Transactional
