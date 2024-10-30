@@ -5,7 +5,6 @@ import com.sparta.plannerservice.user.dto.ReadUserResDto;
 import com.sparta.plannerservice.user.entity.User;
 import com.sparta.plannerservice.user.service.AdminService;
 import com.sparta.plannerservice.user.util.UserFactory;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +33,7 @@ public class AdminController {
     }
 
     @DeleteMapping("/id/{id}")
-    public ResponseEntity<Void> deleteUser(HttpServletResponse httpRes, @PathVariable UUID id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable UUID id) {
         adminService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
