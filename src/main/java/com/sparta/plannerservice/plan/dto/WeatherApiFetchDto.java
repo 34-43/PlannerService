@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class WeatherApiResDto {
+public class WeatherApiFetchDto {
     private String date;
     private String weather;
 }
