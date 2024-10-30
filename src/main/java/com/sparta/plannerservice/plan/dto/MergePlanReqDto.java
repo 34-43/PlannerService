@@ -1,7 +1,5 @@
 package com.sparta.plannerservice.plan.dto;
 
-import com.sparta.plannerservice.common.dto.MergeReqDto;
-import com.sparta.plannerservice.plan.entity.Plan;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -10,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class MergePlanReqDto implements MergeReqDto<Plan> {
+public class MergePlanReqDto {
 
     @NotBlank
     @Size(min = 1, max = 50)
@@ -18,12 +16,4 @@ public class MergePlanReqDto implements MergeReqDto<Plan> {
 
     @NotNull
     private String content;
-
-    @Override
-    public Plan toEntity() {
-        return Plan.builder()
-                .title(title)
-                .content(content)
-                .build();
-    }
 }
