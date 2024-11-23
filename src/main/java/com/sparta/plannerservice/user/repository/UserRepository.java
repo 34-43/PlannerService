@@ -1,6 +1,7 @@
 package com.sparta.plannerservice.user.repository;
 
-import com.sparta.plannerservice.common.exception.IdNotFoundException;
+import com.sparta.plannerservice.common.enums.FailedRequest;
+import com.sparta.plannerservice.common.exception.FailedRequestException;
 import com.sparta.plannerservice.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -12,6 +13,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     Optional<User> findByEmail(String email);
 
     default User findByIdSafe(UUID id) {
-        return this.findById(id).orElseThrow(() -> new IdNotFoundException(User.class, id));
+        return this.findById(id).orElseThrow(() -> new FailedRequestException(FailedRequest.ID_NOT_FOUND));
     }
 }

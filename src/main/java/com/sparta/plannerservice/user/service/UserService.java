@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -32,19 +31,6 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User readUser(UUID id) {
-        return userRepository.findByIdSafe(id);
-    }
-
-    @Transactional
-    public void updateUser(UUID id, User user) {
-        User retrievedUser = userRepository.findByIdSafe(id);
-        // dirty checking 사용
-        retrievedUser.setUsername(user.getUsername());
-        retrievedUser.setEmail(user.getEmail());
-        retrievedUser.setPasswordHash(user.getPasswordHash());
-    }
-
     @Transactional
     public void updateUser(User jwtUser, User reqUser) {
         // jwt 파싱 과정에서 얻은 user 는 detached 이기에 dirty checking 불가능
@@ -54,13 +40,6 @@ public class UserService {
         jwtUser.setEmail(reqUser.getEmail());
         jwtUser.setPasswordHash(reqUser.getPasswordHash());
         userRepository.save(jwtUser);
-    }
-
-    // deleteById 대신, 사용자 지정 find 메서드와 delete 를 차례대로 수행하여 id 값에 대한 처리를 포함시킵니다.
-    @Transactional
-    public void deleteUser(UUID id) {
-        User retrievedUser = userRepository.findByIdSafe(id);
-        userRepository.delete(retrievedUser);
     }
 
     @Transactional
